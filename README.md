@@ -1,24 +1,39 @@
-# Exotic Derivatives Pricing Engine 📈
+[![CI](https://github.com/your-org/your-repo/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/your-repo/actions/workflows/ci.yml)
 
-Welcome to the **Exotic Derivatives Pricing Engine** — a high-performance library for pricing complex financial instruments such as barrier options, Asian options, basket options, and other exotic derivatives.  
+# Systematix — Monte Carlo Options Pricing Dashboard (MVP)
 
-Our mission is to make **quantitative finance tooling** accessible, transparent, and scalable for both research and production environments.
+A brief description of your project.
 
----
+## Installation
 
-## Features
-- **Mathematical Models**
-  - Black-Scholes, Heston, and other stochastic volatility models
-  - Monte Carlo simulation framework with variance reduction techniques
-  - Closed-form solutions where available (e.g., barrier options)
+Instructions on how to install the project.
 
-- **Exotic Derivatives Support**
-  - Barrier options (up-and-out, down-and-in, etc.)
-  - Asian options (arithmetic & geometric averages)
-  - Basket options
-  - Custom payoffs via user-defined functions
+## Usage
 
-- **Utilities**
-  - Random number generators (Sobol, Halton, pseudo-random)
-  - Numerical methods (integration, interpolation)
-  - Risk metrics (Greeks, sensitivities)
+Instructions on how to use the project.
+
+## Continuous Integration
+
+A GitHub Actions workflow is included at `.github/workflows/ci.yml` which installs dependencies and runs pytest on push and PRs to `main`/`master`.
+
+## Developer quick commands
+
+Run unit tests:
+
+```powershell
+py -3 -m pytest -q
+```
+
+Run the smoke test:
+
+```powershell
+py -3 -u .\smoke_test.py
+```
+
+Run the Streamlit dashboard:
+
+```powershell
+py -3 -m streamlit run dashboard.py
+```
+
+If you are using `python` directly instead of the `py` launcher, substitute `python` for `py -3`.
