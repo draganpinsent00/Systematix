@@ -344,6 +344,7 @@ def plot_volatility_surface_3d(surface_data: Dict, option_type: str = 'CALL') ->
     Y = data['strikes']
     Z = data['pivot'].values
 
+    # Create surface with minimal colorbar (no font properties allowed)
     fig = go.Figure(data=[go.Surface(
         x=X, y=Y, z=Z,
         colorscale='Viridis',

@@ -570,6 +570,12 @@ def render_header():
         st.markdown('<p class="header-subtitle">Advanced Exotic Derivatives Pricing</p>', unsafe_allow_html=True)
         st.markdown("---")
 
+    # Add Volatility Surface button to the top-right of the header
+    with col3:
+        if st.button("Volatility Surface Analysis", use_container_width=False, key="vol_surface_header_btn"):
+            st.session_state["page"] = "volatility_surface"
+            st.rerun()
+
 
 def render_inputs_section():
     """Render all input controls in organized columns."""
@@ -882,11 +888,6 @@ def render_dashboard():
 
     # Navigation and Control buttons
     nav_col, btn_col1, btn_col2 = st.columns([1, 1, 1])
-
-    with nav_col:
-        if st.button("Volatility Surface Analysis", use_container_width=True):
-            st.session_state["page"] = "volatility_surface"
-            st.rerun()
 
     # Control buttons
     run_button, config_button, reset_button = render_control_buttons()
@@ -1551,24 +1552,23 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                     fig = go.Figure(data=[go.Surface(
                         x=X, y=Y, z=Z,
                         colorscale='Viridis',
-                        colorbar=dict(title='Implied Vol', tickfont=dict(color='#f5f7fa'), font=dict(color='#f5f7fa')),
+                        colorbar=dict(title='Implied Vol', tickfont=dict(color='#f5f7fa')),
                         showscale=True
                     )])
 
                     fig.update_layout(
-                        title=dict(text=f'Real Market Volatility Surface - {opt_type}', font=dict(color='#f5f7fa', size=16)),
+                        title=dict(text=f'Real Market Volatility Surface - {opt_type}'),
                         scene=dict(
-                            xaxis=dict(title='Days to Expiration', font=dict(color='#f5f7fa'), tickfont=dict(color='#f5f7fa')),
-                            yaxis=dict(title='Strike Price', font=dict(color='#f5f7fa'), tickfont=dict(color='#f5f7fa')),
-                            zaxis=dict(title='Implied Volatility', font=dict(color='#f5f7fa'), tickfont=dict(color='#f5f7fa')),
+                            xaxis=dict(title='Days to Expiration', tickfont=dict(color='#f5f7fa')),
+                            yaxis=dict(title='Strike Price', tickfont=dict(color='#f5f7fa')),
+                            zaxis=dict(title='Implied Volatility', tickfont=dict(color='#f5f7fa')),
                             camera=dict(eye=dict(x=1.5, y=1.5, z=1.3)),
                             bgcolor='#1a2332'
                         ),
                         paper_bgcolor='#0f1419',
                         plot_bgcolor='#1a2332',
                         height=700,
-                        hovermode='closest',
-                        font=dict(color='#f5f7fa', family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif")
+                        hovermode='closest'
                     )
 
                     fig = apply_theme(fig)
@@ -1602,14 +1602,13 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                             marker=dict(size=8, color='#d4af7c')
                         ))
                         fig_strike.update_layout(
-                            title=dict(text=f'{opt_type} IV vs Strike (T={mat_days} days)', font=dict(color='#f5f7fa')),
-                            xaxis=dict(title='Strike Price', font=dict(color='#f5f7fa'), tickfont=dict(color='#f5f7fa')),
-                            yaxis=dict(title='Implied Volatility', font=dict(color='#f5f7fa'), tickfont=dict(color='#f5f7fa')),
+                            title=dict(text=f'{opt_type} IV vs Strike (T={mat_days} days)'),
+                            xaxis=dict(title='Strike Price', tickfont=dict(color='#f5f7fa')),
+                            yaxis=dict(title='Implied Volatility', tickfont=dict(color='#f5f7fa')),
                             hovermode='x unified',
                             height=500,
                             paper_bgcolor='#0f1419',
-                            plot_bgcolor='#1a2332',
-                            font=dict(color='#f5f7fa', family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif")
+                            plot_bgcolor='#1a2332'
                         )
                         fig_strike = apply_theme(fig_strike)
                         st.plotly_chart(fig_strike, use_container_width=True)
@@ -1638,14 +1637,13 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                             marker=dict(size=8, color='#d4af7c')
                         ))
                         fig_mat.update_layout(
-                            title=dict(text=f'{opt_type} IV vs Maturity (K=${closest_K:.2f})', font=dict(color='#f5f7fa')),
-                            xaxis=dict(title='Days to Expiration', font=dict(color='#f5f7fa'), tickfont=dict(color='#f5f7fa')),
-                            yaxis=dict(title='Implied Volatility', font=dict(color='#f5f7fa'), tickfont=dict(color='#f5f7fa')),
+                            title=dict(text=f'{opt_type} IV vs Maturity (K=${closest_K:.2f})'),
+                            xaxis=dict(title='Days to Expiration', tickfont=dict(color='#f5f7fa')),
+                            yaxis=dict(title='Implied Volatility', tickfont=dict(color='#f5f7fa')),
                             hovermode='x unified',
                             height=500,
                             paper_bgcolor='#0f1419',
-                            plot_bgcolor='#1a2332',
-                            font=dict(color='#f5f7fa', family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif")
+                            plot_bgcolor='#1a2332'
                         )
                         fig_mat = apply_theme(fig_mat)
                         st.plotly_chart(fig_mat, use_container_width=True)
@@ -1773,4 +1771,3 @@ def _generate_mock_vol_surface(ticker, strike_range, maturity_range):
 
 if __name__ == "__main__":
     run_pricing()
-

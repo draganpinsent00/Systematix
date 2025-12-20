@@ -29,9 +29,6 @@ def get_plotly_template() -> Dict[str, Any]:
     return {
         "layout": go.Layout(
             template="plotly_dark",
-            font=dict(family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                     size=11,
-                     color="#ffffff"),
             title_font_size=14,
             title_x=0.5,
             hovermode="x unified",
@@ -44,7 +41,7 @@ def get_plotly_template() -> Dict[str, Any]:
                 showline=True,
                 linewidth=1,
                 linecolor=THEME_COLORS["accent_gold"],
-                title=dict(text="", font=dict(color="#ffffff", size=12)),
+                title=dict(text=""),
                 tickfont=dict(color="#ffffff"),
             ),
             yaxis=dict(
@@ -54,7 +51,7 @@ def get_plotly_template() -> Dict[str, Any]:
                 showline=True,
                 linewidth=1,
                 linecolor=THEME_COLORS["accent_gold"],
-                title=dict(text="", font=dict(color="#ffffff", size=12)),
+                title=dict(text=""),
                 tickfont=dict(color="#ffffff"),
             ),
             margin=dict(l=60, r=60, t=60, b=60),
@@ -63,28 +60,33 @@ def get_plotly_template() -> Dict[str, Any]:
 
 
 def apply_theme(fig: go.Figure) -> go.Figure:
-    """Apply professional StochastiX theme to figure."""
+    """Apply professional StochastiX theme to figure.
+
+    NOTE: Skips Surface plots completely to avoid colorbar font conflicts.
+    """
+    # Check if this is a Surface plot - if so, return completely untouched
+    if fig.data and any(trace.type == 'surface' for trace in fig.data):
+        return fig
+
+    # Apply theme to layout (safe for non-Surface plots)
     fig.update_layout(
         template="plotly_dark",
-        font=dict(family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                 size=11,
-                 color="#ffffff"),
         hovermode="x unified",
         plot_bgcolor=THEME_COLORS["navy_primary"],
         paper_bgcolor=THEME_COLORS["navy_dark"],
-        title=dict(font=dict(color="#ffffff")),
+        title=dict(),
         xaxis=dict(
             gridcolor="rgba(212, 175, 124, 0.1)",
             showline=True,
             linecolor=THEME_COLORS["accent_gold"],
-            title=dict(font=dict(color="#ffffff")),
+            title=dict(),
             tickfont=dict(color="#ffffff"),
         ),
         yaxis=dict(
             gridcolor="rgba(212, 175, 124, 0.1)",
             showline=True,
             linecolor=THEME_COLORS["accent_gold"],
-            title=dict(font=dict(color="#ffffff")),
+            title=dict(),
             tickfont=dict(color="#ffffff"),
         ),
     )
@@ -95,5 +97,3 @@ def apply_theme(fig: go.Figure) -> go.Figure:
             trace.line.color = THEME_COLORS["accent_gold"]
 
     return fig
-
-

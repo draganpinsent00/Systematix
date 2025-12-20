@@ -135,7 +135,6 @@ def chart_diagnostic_table(diagnostics: Dict[str, float], title: str = "Path Dia
             values=['Metric', 'Value'],
             fill_color=THEME_COLORS["primary"],
             align='left',
-            font=dict(color='white'),
         ),
         cells=dict(
             values=[metrics, values],
@@ -146,4 +145,3 @@ def chart_diagnostic_table(diagnostics: Dict[str, float], title: str = "Path Dia
 
     fig.update_layout(title=title, height=300)
     return fig
-
