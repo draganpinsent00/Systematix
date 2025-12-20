@@ -36,7 +36,7 @@ from ui.components import (
     input_option_params, show_error, show_success
 )
 from ui.dynamic_forms import render_model_params_dynamic, render_option_type_selector, render_model_selector
-from ui.state import initialize_session_state, save_config, get_config, build_pricing_config, display_config_summary
+from ui.state import initialize_session_state, save_config, get_config, build_pricing_config, display_config_summary, clear_app_state, append_to_history
 from utils.validation import validate_market_params, validate_mc_settings, validate_option_params
 from utils.logging import log_pricing_event
 
@@ -894,8 +894,7 @@ def render_dashboard():
 
     # Handle button actions
     if reset_button:
-        st.session_state.clear()
-        st.session_state["page"] = "dashboard"
+        clear_app_state()
         st.rerun()
 
     if config_button:
@@ -992,6 +991,17 @@ def render_dashboard():
                 log_pricing_event(model_name, option_type, mc_result.price)
                 show_success(f"Pricing calculation complete. Fair value: ${mc_result.price:.6f}")
 
+                # Append to run history
+                from datetime import datetime
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                params_summary = {
+                    "spot": market_params.get("spot", "N/A"),
+                    "strike": option_params.get("strike", "N/A"),
+                    "volatility": market_params.get("initial_volatility", "N/A"),
+                    "time_to_maturity": market_params.get("time_to_maturity", "N/A"),
+                }
+                append_to_history(timestamp, model_name, option_type, mc_result.price, params_summary)
+
             except Exception as e:
                 show_error(f"Pricing error: {str(e)}")
                 import traceback
@@ -1016,6 +1026,43 @@ def render_dashboard():
         saved_rng = get_config("rng")
         saved_mc_settings = get_config("mc_settings")
         render_greeks_diagnostics_section(mc_result, market_params, option_type, model=saved_model, rng=saved_rng, mc_settings=saved_mc_settings)
+
+    # Display run history
+    render_history_section()
+
+
+def render_history_section():
+    """Display a read-only history of previous simulation runs."""
+    history = get_config("run_history", [])
+
+    if not history:
+        return
+
+    st.markdown("---")
+    st.markdown("## 📜 History")
+
+    with st.expander("View previous runs", expanded=False):
+        if not history:
+            st.info("No runs recorded yet.")
+        else:
+            # Build a simple table-like display
+            for idx, entry in enumerate(reversed(history), 1):
+                with st.container():
+                    col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
+                    with col1:
+                        st.text(f"🕐 {entry.get('timestamp', 'N/A')}")
+                    with col2:
+                        st.text(f"📊 {entry.get('model', 'N/A')}")
+                    with col3:
+                        st.text(f"📈 {entry.get('option_type', 'N/A')}")
+                    with col4:
+                        st.text(f"💰 ${entry.get('price', 0):.6f}")
+
+                    # Show summary params
+                    params = entry.get('params_summary', {})
+                    param_str = " | ".join([f"{k}={v}" for k, v in params.items()])
+                    st.caption(param_str)
+                    st.divider()
 
 
 def render_volatility_surface_page():

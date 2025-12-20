@@ -35,6 +35,9 @@ def initialize_session_state():
     if "pricing_config" not in st.session_state:
         st.session_state.pricing_config = {}
 
+    if "run_history" not in st.session_state:
+        st.session_state.run_history = []
+
 
 def save_config(key: str, value: Any):
     """Save configuration value to session state."""
@@ -63,4 +66,45 @@ def display_config_summary(config: Dict[str, Any]):
     """Display resolved configuration as a summary."""
     with st.expander("📋 Configuration Summary", expanded=False):
         st.json(config)
+
+
+def clear_app_state():
+    """Clear only application-owned session state keys, preserve page navigation."""
+    # List of application-owned keys to reset
+    APP_KEYS = [
+        "market_params",
+        "mc_settings",
+        "rng_settings",
+        "model_name",
+        "model_params",
+        "option_type",
+        "option_params",
+        "mc_result",
+        "pricing_config",
+        "model",
+        "rng",
+    ]
+
+    for key in APP_KEYS:
+        if key in st.session_state:
+            del st.session_state[key]
+
+    # Re-initialize defaults
+    initialize_session_state()
+
+
+def append_to_history(timestamp: str, model: str, option_type: str, price: float, params_summary: Dict[str, Any]):
+    """Append a successful run to the history."""
+    if "run_history" not in st.session_state:
+        st.session_state.run_history = []
+
+    entry = {
+        "timestamp": timestamp,
+        "model": model,
+        "option_type": option_type,
+        "price": price,
+        "params_summary": params_summary,
+    }
+
+    st.session_state.run_history.append(entry)
 

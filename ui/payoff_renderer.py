@@ -40,7 +40,7 @@ def render_payoff_parameters(option_type: str) -> Dict[str, Any]:
     st.markdown(f"### 📋 Payoff Parameters ({category})")
 
     # Disclaimer for experimental / WIP payoff implementations
-    if category in ("Parisian", "Bermudan", "Multi-Asset"):
+    if category in ("Parisian", "Bermudan", "Multi-Asset", "Rainbow"):
         # Small, unobtrusive caption next to the parameters
         st.caption("(Work in progress)")
 

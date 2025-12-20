@@ -80,10 +80,10 @@ def render_option_type_selector() -> str:
         categories[category].append((key, info["name"]))
 
     # Build display labels for categories; append WIP marker for experimental categories
-    WIP_CATEGORIES = {"Parisian", "Bermudan", "Multi-Asset"}
+    WIP_CATEGORIES = {"Parisian", "Bermudan", "Multi-Asset", "Rainbow"}
     display_label_map = {}
     display_categories = []
-    for cat in categories.keys():
+    for cat in sorted(categories.keys()):
         if cat in WIP_CATEGORIES:
             label = f"{cat} (Work in progress)"
         else:
@@ -92,16 +92,30 @@ def render_option_type_selector() -> str:
         display_label_map[label] = cat
 
     # Show select box with user-friendly labels
-    selected_display = st.selectbox("Option Category", display_categories)
+    selected_display = st.selectbox("Option Category", display_categories, key="option_category_selector")
     # Map back to original category key
     selected_category = display_label_map[selected_display]
 
     options_in_category = categories[selected_category]
-    option_display = [name for _, name in options_in_category]
 
-    selected_name = st.selectbox("Option Type", option_display)
-    # Find the key corresponding to the selected display name
-    selected_key = next(key for key, name in options_in_category if name == selected_name)
+    # For WIP categories append the marker to each option display name, and
+    # create a mapping from displayed name back to the option key so selection
+    # still resolves correctly.
+    display_to_key = {}
+    option_display = []
+    if selected_category in WIP_CATEGORIES:
+        for key, name in options_in_category:
+            disp = f"{name} (Work in progress)"
+            option_display.append(disp)
+            display_to_key[disp] = key
+    else:
+        for key, name in options_in_category:
+            option_display.append(name)
+            display_to_key[name] = key
+
+    selected_name = st.selectbox("Option Type", option_display, key="option_type_selector")
+    # Map displayed selection back to the option key
+    selected_key = display_to_key[selected_name]
 
     return selected_key
 
