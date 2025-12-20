@@ -1,11 +1,16 @@
 # Core app
 streamlit>=1.24.0
 plotly>=5.15.0
+yfinance>=0.2.25
 
 # Data handling / numerics
 pandas>=2.0.0
 numpy>=1.23.0
 scipy>=1.9.0
+
+# Option pricing / vol-surface helpers
+py_vollib>=1.0.0
+mibian>=0.3.2
 
 # ML / utilities (if used)
 scikit-learn>=1.1.0
