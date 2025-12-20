@@ -10,7 +10,7 @@ scipy>=1.9.0
 
 # Option pricing / vol-surface helpers
 py_vollib>=1.0.0
-mibian>=0.3.2
+mibian>=0.1.2
 
 # ML / utilities (if used)
 scikit-learn>=1.1.0
