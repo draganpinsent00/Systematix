@@ -1131,11 +1131,11 @@ def render_volatility_surface_page():
     
     /* Sidebar */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, var(--navy-primary) 0%, var(--slate-secondary) 100%);
+        background: linear-gradient(180deg, var(--navy-dark) 50%, var(--slate-secondary) 100%);
     }
     
     .sidebar .stMarkdown {
-        color: var(--text-secondary);
+        color: var(--text-primary);
     }
     
     .sidebar h2 {
@@ -1182,14 +1182,20 @@ def render_volatility_surface_page():
         st.session_state["page"] = "dashboard"
         st.rerun()
 
-    st.markdown('<h1 class="header-title" style="text-align:center;">Volatility Surface Analysis</h1>', unsafe_allow_html=True)
+    st.markdown(
+        '<h1 class="header-title" style="text-align:center; color:#d4af7c;">Volatility Surface Analysis</h1>',
+        unsafe_allow_html=True
+    )
+
     st.markdown('<p class="header-subtitle" style="text-align:center;">European Option Market Quotes & Implied Volatility Surface Construction</p>', unsafe_allow_html=True)
     st.markdown("---")
 
     # Sidebar configuration
     with st.sidebar:
-        st.markdown("## Market Data Configuration")
-
+        st.markdown(
+            "<h2 style='color:white;'>Market Data Configuration</h2>",
+            unsafe_allow_html=True
+        )
         ticker = st.text_input(
             "Underlying Equity Ticker",
             value="AAPL",
@@ -1507,6 +1513,16 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
         st.warning("Could not compute implied volatilities from market prices")
         return
 
+    st.markdown("""
+    <style>
+    [data-testid="stMetricLabel"],
+    [data-testid="stMetricValue"],
+    [data-testid="stMetricDelta"] {
+        color: white !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # Display data coverage
     col1, col2 = st.columns(2)
     with col1:
@@ -1557,7 +1573,7 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                     )])
 
                     fig.update_layout(
-                        title=dict(text=f'Real Market Volatility Surface - {opt_type}'),
+                        title=dict(text=f'Real Market Volatility Surface - {opt_type}', font=dict(color='white')),
                         scene=dict(
                             xaxis=dict(title='Days to Expiration', tickfont=dict(color='#f5f7fa')),
                             yaxis=dict(title='Strike Price', tickfont=dict(color='#f5f7fa')),
@@ -1579,7 +1595,10 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                     col1, col2 = st.columns(2)
 
                     with col1:
-                        st.markdown("### IV vs Strike")
+                        st.markdown(
+                            "<h3 style='color:white;'>IV vs Strike</h3>",
+                            unsafe_allow_html=True
+                        )
                         mat_days = st.slider(
                             f"Select Maturity (days) - {opt_type}",
                             min_value=int(min(maturities) * 365),
@@ -1602,7 +1621,7 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                             marker=dict(size=8, color='#d4af7c')
                         ))
                         fig_strike.update_layout(
-                            title=dict(text=f'{opt_type} IV vs Strike (T={mat_days} days)'),
+                            title=dict(text=f'{opt_type} IV vs Strike (T={mat_days} days)', font=dict(color='white')),
                             xaxis=dict(title='Strike Price', tickfont=dict(color='#f5f7fa')),
                             yaxis=dict(title='Implied Volatility', tickfont=dict(color='#f5f7fa')),
                             hovermode='x unified',
@@ -1614,7 +1633,10 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                         st.plotly_chart(fig_strike, use_container_width=True)
 
                     with col2:
-                        st.markdown("### IV vs Maturity")
+                        st.markdown(
+                            "<h3 style='color:white;'>IV vs Maturity</h3>",
+                            unsafe_allow_html=True
+                        )
                         strike_val = st.slider(
                             f"Select Strike - {opt_type}",
                             min_value=float(min(strikes)),
@@ -1637,7 +1659,7 @@ def _build_and_display_vol_surface(df: pd.DataFrame, spot_price: float, risk_fre
                             marker=dict(size=8, color='#d4af7c')
                         ))
                         fig_mat.update_layout(
-                            title=dict(text=f'{opt_type} IV vs Maturity (K=${closest_K:.2f})'),
+                            title=dict(text=f'{opt_type} IV vs Maturity (K=${closest_K:.2f})', font=dict(color='white')),
                             xaxis=dict(title='Days to Expiration', tickfont=dict(color='#f5f7fa')),
                             yaxis=dict(title='Implied Volatility', tickfont=dict(color='#f5f7fa')),
                             hovermode='x unified',

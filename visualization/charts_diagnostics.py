@@ -68,7 +68,9 @@ def chart_convergence(
         height=400,
     )
 
-    return apply_theme(fig)
+    fig = apply_theme(fig)
+    fig.update_layout(title=dict(font=dict(color='white')), legend=dict(font=dict(color='white')))
+    return fig
 
 
 def chart_var_cvar(
@@ -144,4 +146,6 @@ def chart_diagnostic_table(diagnostics: Dict[str, float], title: str = "Path Dia
     )])
 
     fig.update_layout(title=title, height=300)
+    fig = apply_theme(fig)
+    fig.update_layout(title=dict(font=dict(color='white')), legend=dict(font=dict(color='white')))
     return fig

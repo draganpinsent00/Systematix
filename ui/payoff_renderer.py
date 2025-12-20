@@ -39,6 +39,11 @@ def render_payoff_parameters(option_type: str) -> Dict[str, Any]:
     category = schema.get("category", "Option")
     st.markdown(f"### 📋 Payoff Parameters ({category})")
 
+    # Disclaimer for experimental / WIP payoff implementations
+    if category in ("Parisian", "Bermudan", "Multi-Asset"):
+        # Small, unobtrusive caption next to the parameters
+        st.caption("(Work in progress)")
+
     # Determine layout: use columns for better UI organization
     num_params = len(param_list)
 
@@ -119,4 +124,3 @@ def list_payoff_parameters_for_type(option_type: str) -> list:
     schema = PAYOFF_UI_SCHEMA.get(option_type, {})
     params = schema.get("params", [])
     return [p.get("key") for p in params]
-

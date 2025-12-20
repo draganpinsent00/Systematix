@@ -352,16 +352,14 @@ def plot_volatility_surface_3d(surface_data: Dict, option_type: str = 'CALL') ->
     )])
 
     fig.update_layout(
-        title=f'Volatility Surface - {option_type}',
-        scene=dict(
-            xaxis_title='Days to Expiration',
-            yaxis_title='Strike Price',
-            zaxis_title='Implied Volatility',
-            camera=dict(eye=dict(x=1.5, y=1.5, z=1.3))
+        template="plotly_dark",
+        title=dict(
+            text=f'Volatility Surface - {option_type}',
+            font=dict(color='white', size=18),
+            x=0.5
         ),
-        width=900,
-        height=700,
-        hovermode='closest'
+        paper_bgcolor="#0e1117",
+        margin=dict(t=80)
     )
 
     return fig
@@ -400,6 +398,8 @@ def plot_iv_by_strike(surface_data: Dict, maturity_days: float,
         height=500
     )
 
+    fig.update_layout(title=dict(font=dict(color='white')))
+
     return fig
 
 
@@ -435,6 +435,8 @@ def plot_iv_by_maturity(surface_data: Dict, strike_price: float,
         hovermode='x unified',
         height=500
     )
+
+    fig.update_layout(title=dict(font=dict(color='white')))
 
     return fig
 

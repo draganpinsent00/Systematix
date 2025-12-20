@@ -14,12 +14,12 @@ THEME_COLORS = {
     "danger": "#d32f2f",
     "neutral": "#d4dce8",
     "light": "#f5f7fa",
-    "dark": "#0a0e1f",
+    "dark": "#f5f7fa",
     "navy_dark": "#0a0e1f",
     "navy_primary": "#141829",
-    "slate_secondary": "#2a3f5f",
+    "slate_secondary": "#f5f7fa",
     "text_primary": "#f5f7fa",
-    "text_secondary": "#d4dce8",
+    "text_secondary": "#f5f7fa",
     "accent_gold": "#d4af7c",
 }
 
@@ -79,14 +79,14 @@ def apply_theme(fig: go.Figure) -> go.Figure:
             gridcolor="rgba(212, 175, 124, 0.1)",
             showline=True,
             linecolor=THEME_COLORS["accent_gold"],
-            title=dict(),
+            title=dict(font=dict(color="#ffffff")),
             tickfont=dict(color="#ffffff"),
         ),
         yaxis=dict(
             gridcolor="rgba(212, 175, 124, 0.1)",
             showline=True,
             linecolor=THEME_COLORS["accent_gold"],
-            title=dict(),
+            title=dict(font=dict(color="#ffffff")),
             tickfont=dict(color="#ffffff"),
         ),
     )

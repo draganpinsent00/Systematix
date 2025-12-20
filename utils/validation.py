@@ -27,9 +27,31 @@ def validate_mc_settings(settings: Dict[str, Any]) -> Tuple[bool, Optional[str]]
 
 
 def validate_option_params(params: Dict[str, float]) -> Tuple[bool, Optional[str]]:
-    """Validate option parameters."""
-    if params.get("strike", 0) <= 0:
-        return False, "Strike must be positive"
+    """Validate option parameters.
+
+    This validation is flexible: many payoffs use different strike keys
+    (for example `strike`, `trigger_strike`, `payoff_strike`).
+    We consider any parameter whose name contains the substring "strike"
+    (case-insensitive) and check that its numeric value is positive.
+    """
+    if not params:
+        return True, None
+
+    # Find keys that represent strikes (e.g., 'strike', 'trigger_strike', 'payoff_strike')
+    strike_keys = [k for k in params.keys() if 'strike' in k.lower()]
+
+    # If any strike-like keys are present, validate them
+    for k in strike_keys:
+        try:
+            val = float(params.get(k, 0))
+        except Exception:
+            return False, f"{k} must be a numeric value"
+        if val <= 0:
+            # User-friendly label: convert snake_case to Title Case
+            label = k.replace('_', ' ').title()
+            return False, f"{label} must be positive"
+
+    # If no strike keys are present, assume validation passes here (other validators may catch missing required params)
     return True, None
 
 
@@ -42,4 +64,3 @@ def validate_correlation_matrix(corr: np.ndarray) -> Tuple[bool, Optional[str]]:
         return True, None
     except Exception as e:
         return False, f"Correlation matrix error: {str(e)}"
-

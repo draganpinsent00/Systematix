@@ -79,12 +79,29 @@ def render_option_type_selector() -> str:
             categories[category] = []
         categories[category].append((key, info["name"]))
 
-    selected_category = st.selectbox("Option Category", list(categories.keys()))
+    # Build display labels for categories; append WIP marker for experimental categories
+    WIP_CATEGORIES = {"Parisian", "Bermudan", "Multi-Asset"}
+    display_label_map = {}
+    display_categories = []
+    for cat in categories.keys():
+        if cat in WIP_CATEGORIES:
+            label = f"{cat} (Work in progress)"
+        else:
+            label = cat
+        display_categories.append(label)
+        display_label_map[label] = cat
+
+    # Show select box with user-friendly labels
+    selected_display = st.selectbox("Option Category", display_categories)
+    # Map back to original category key
+    selected_category = display_label_map[selected_display]
+
     options_in_category = categories[selected_category]
     option_display = [name for _, name in options_in_category]
 
     selected_name = st.selectbox("Option Type", option_display)
-    selected_key = [key for key, (_, name) in [(k, (k, n)) for k, n in options_in_category] if name == selected_name][0]
+    # Find the key corresponding to the selected display name
+    selected_key = next(key for key, name in options_in_category if name == selected_name)
 
     return selected_key
 
@@ -95,4 +112,3 @@ def render_model_selector() -> str:
     selected_name = st.selectbox("Stochastic Model", list(model_names.values()))
     selected_key = [k for k, v in model_names.items() if v == selected_name][0]
     return selected_key
-

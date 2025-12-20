@@ -63,7 +63,9 @@ def chart_simulation_paths(
         height=400,
     )
 
-    return apply_theme(fig)
+    fig = apply_theme(fig)
+    fig.update_layout(title=dict(font=dict(color='white')), legend=dict(font=dict(color='white')))
+    return fig
 
 
 def chart_distribution_histogram(
@@ -99,5 +101,7 @@ def chart_distribution_histogram(
         height=400,
     )
 
-    return apply_theme(fig)
+    fig = apply_theme(fig)
+    fig.update_layout(title=dict(font=dict(color='white')), legend=dict(font=dict(color='white')))
+    return fig
 
