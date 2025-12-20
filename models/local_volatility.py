@@ -1,16 +1,17 @@
 """
-Geometric Brownian Motion model.
+Local Volatility (Flat Surface) Model.
+
+Wrapper around GBM with time-dependent volatility.
+σ(t, S) = σ₀ (constant in this simplified version)
 """
 
 import numpy as np
-from typing import Dict, Any, Optional
-from models.base import StochasticModel
-from core.rng_distributions import InnovationTransform
-from core.numerics import safe_log, safe_sqrt
+from typing import Dict, Any, Tuple, Optional
+from .base import StochasticModel
 
 
-class GBM(StochasticModel):
-    """Geometric Brownian Motion."""
+class LocalVolatility(StochasticModel):
+    """Local Volatility model with flat deterministic surface."""
 
     def __init__(
         self,
@@ -20,7 +21,7 @@ class GBM(StochasticModel):
         initial_volatility: float,
         time_to_maturity: float,
     ):
-        """Initialize GBM model."""
+        """Initialize Local Volatility model."""
         super().__init__(spot, risk_free_rate, dividend_yield, time_to_maturity)
         self.sigma = initial_volatility
 
@@ -36,7 +37,11 @@ class GBM(StochasticModel):
         **kwargs
     ) -> np.ndarray:
         """
-        Generate GBM paths.
+        Generate Local Volatility paths using flat surface.
+
+        dS/S = (r - q)*dt + σ(t, S)*dW
+
+        In flat case, σ(t, S) = σ₀ (reduces to GBM).
 
         Returns:
             Array of shape (num_paths, num_steps + 1)
@@ -44,7 +49,7 @@ class GBM(StochasticModel):
         dt = self.T / num_steps
         sqrt_dt = np.sqrt(dt)
 
-        # Generate innovations (sobol not yet implemented, use pseudo-random)
+        # Generate innovations
         Z = rng_engine.standard_normal((num_paths, num_steps))
 
         # Apply antithetic variates
@@ -54,10 +59,11 @@ class GBM(StochasticModel):
             num_paths = half * 2
 
         # Transform to desired distribution
+        from core.rng_distributions import InnovationTransform
         transform = InnovationTransform(distribution, student_t_df, use_sobol=False)
         Z_transformed = transform.transform(Z)
 
-        # Generate paths
+        # Generate paths (log-space, like GBM)
         paths = np.zeros((num_paths, num_steps + 1))
         paths[:, 0] = self.spot
 
@@ -79,8 +85,8 @@ class GBM(StochasticModel):
             "time_to_maturity": self.T,
         }
 
-    def validate(self) -> tuple:
-        """Validate GBM parameters."""
+    def validate(self) -> Tuple[bool, Optional[str]]:
+        """Validate Local Volatility parameters."""
         valid, msg = super().validate()
         if not valid:
             return valid, msg

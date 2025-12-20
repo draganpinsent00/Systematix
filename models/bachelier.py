@@ -1,16 +1,16 @@
 """
-Geometric Brownian Motion model.
+Bachelier Model - Arithmetic Brownian Motion.
+
+S_t = S_0 + r*t + σ*W_t
 """
 
 import numpy as np
-from typing import Dict, Any, Optional
-from models.base import StochasticModel
-from core.rng_distributions import InnovationTransform
-from core.numerics import safe_log, safe_sqrt
+from typing import Dict, Any, Tuple, Optional
+from .base import StochasticModel
 
 
-class GBM(StochasticModel):
-    """Geometric Brownian Motion."""
+class Bachelier(StochasticModel):
+    """Bachelier (Arithmetic Brownian Motion) model."""
 
     def __init__(
         self,
@@ -20,7 +20,7 @@ class GBM(StochasticModel):
         initial_volatility: float,
         time_to_maturity: float,
     ):
-        """Initialize GBM model."""
+        """Initialize Bachelier model."""
         super().__init__(spot, risk_free_rate, dividend_yield, time_to_maturity)
         self.sigma = initial_volatility
 
@@ -36,7 +36,9 @@ class GBM(StochasticModel):
         **kwargs
     ) -> np.ndarray:
         """
-        Generate GBM paths.
+        Generate Bachelier paths.
+
+        dS = r*dt + σ*dW
 
         Returns:
             Array of shape (num_paths, num_steps + 1)
@@ -44,7 +46,7 @@ class GBM(StochasticModel):
         dt = self.T / num_steps
         sqrt_dt = np.sqrt(dt)
 
-        # Generate innovations (sobol not yet implemented, use pseudo-random)
+        # Generate innovations
         Z = rng_engine.standard_normal((num_paths, num_steps))
 
         # Apply antithetic variates
@@ -54,6 +56,7 @@ class GBM(StochasticModel):
             num_paths = half * 2
 
         # Transform to desired distribution
+        from core.rng_distributions import InnovationTransform
         transform = InnovationTransform(distribution, student_t_df, use_sobol=False)
         Z_transformed = transform.transform(Z)
 
@@ -61,11 +64,8 @@ class GBM(StochasticModel):
         paths = np.zeros((num_paths, num_steps + 1))
         paths[:, 0] = self.spot
 
-        log_paths = np.log(paths[:, 0])
-
         for t in range(num_steps):
-            log_paths += (self.drift - 0.5 * self.sigma ** 2) * dt + self.sigma * sqrt_dt * Z_transformed[:, t]
-            paths[:, t + 1] = np.exp(log_paths)
+            paths[:, t + 1] = paths[:, t] + self.drift * dt + self.sigma * sqrt_dt * Z_transformed[:, t]
 
         return paths
 
@@ -79,8 +79,8 @@ class GBM(StochasticModel):
             "time_to_maturity": self.T,
         }
 
-    def validate(self) -> tuple:
-        """Validate GBM parameters."""
+    def validate(self) -> Tuple[bool, Optional[str]]:
+        """Validate Bachelier parameters."""
         valid, msg = super().validate()
         if not valid:
             return valid, msg

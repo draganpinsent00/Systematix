@@ -1,6 +1,6 @@
-# models package initializer
-from .monte_carlo import run_batched_simulation
-from .processes import simulate_paths
+"""
+Optional type annotation import fix for multi_asset.py
+"""
 
-__all__ = ['run_batched_simulation', 'simulate_paths']
+from typing import Optional
 
