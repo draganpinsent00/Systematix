@@ -324,9 +324,7 @@ Proprietary - Systematix Trading Systems
 
 ## Support
 
-For questions or issues, refer to inline documentation and docstrings throughout the codebase.
+For questions or issues reach out to draganpinsent00@gmail.com or refer to inline documentation and docstrings throughout the codebase.
 
----
 
-**Built with ❤️ for quantitative finance**
 
