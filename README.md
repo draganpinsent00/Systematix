@@ -47,12 +47,6 @@ Then open http://localhost:8501 in your browser.
 - Configuration export for audit trails
 - Supports single and multi-asset scenarios
 
-## Documentation
-
-- **PROJECT_SUMMARY.md** - Non-technical overview and capabilities
-- **ARCHITECTURE.md** - System design and implementation details
-
-
 #### Rainbow (2)
 - Rainbow Max Call
 - Rainbow Min Put
